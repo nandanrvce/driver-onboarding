@@ -6,6 +6,7 @@ import com.nandan.driveronboarding.entities.UserContextHolder;
 import com.nandan.driveronboarding.entities.Vehicle;
 import com.nandan.driveronboarding.enums.FileStatus;
 import com.nandan.driveronboarding.mappers.VehicleInformationMapper;
+import com.nandan.driveronboarding.repository.FileStorageRepository;
 import com.nandan.driveronboarding.repository.UserRepository;
 import com.nandan.driveronboarding.requests.FileUploadRequest;
 import com.nandan.driveronboarding.requests.VehicleInformationRequest;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class VehicleRegistration {
@@ -31,6 +34,9 @@ public class VehicleRegistration {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    FileStorageRepository fileStorageRepository;
 
     public String storeAllFiles(FileUploadRequest fileUploadRequest) throws IOException {
         Long userId = UserContextHolder.getContext().getUserId();
@@ -70,9 +76,14 @@ public class VehicleRegistration {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage("Vehicle information added Successfully"));
     }
 
-    public ResponseEntity<String> getDocumentStatus() {
+    public Map<String,String> getDocumentStatus() {
         Long userId = UserContextHolder.getContext().getUserId();
         User user = userRepository.findById(userId).get();
-
+        List<FileInfo> fileInfos = fileStorageRepository.findByUser(user).get();
+        Map<String,String> map = new HashMap<>();
+        for(FileInfo info:fileInfos){
+            map.put(info.getName(),info.getStatus().name());
+        }
+        return map;
     }
 }
