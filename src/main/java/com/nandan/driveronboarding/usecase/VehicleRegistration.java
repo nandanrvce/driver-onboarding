@@ -3,12 +3,18 @@ package com.nandan.driveronboarding.usecase;
 import com.nandan.driveronboarding.entities.FileInfo;
 import com.nandan.driveronboarding.entities.User;
 import com.nandan.driveronboarding.entities.UserContextHolder;
+import com.nandan.driveronboarding.entities.Vehicle;
 import com.nandan.driveronboarding.enums.FileStatus;
-import com.nandan.driveronboarding.repository.FileStorageRepository;
+import com.nandan.driveronboarding.mappers.VehicleInformationMapper;
 import com.nandan.driveronboarding.repository.UserRepository;
 import com.nandan.driveronboarding.requests.FileUploadRequest;
+import com.nandan.driveronboarding.requests.VehicleInformationRequest;
+import com.nandan.driveronboarding.responses.ResponseMessage;
 import com.nandan.driveronboarding.service.interfaces.FilesStorageService;
+import com.nandan.driveronboarding.service.interfaces.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,10 +25,13 @@ import java.util.List;
 public class VehicleRegistration {
     @Autowired
     FilesStorageService storageService;
+
+    @Autowired
+    VehicleService vehicleService;
+
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    FileStorageRepository fileStorageRepository;
+
     public String storeAllFiles(FileUploadRequest fileUploadRequest) throws IOException {
         Long userId = UserContextHolder.getContext().getUserId();
         storageService.save(fileUploadRequest.getDl());
@@ -48,6 +57,22 @@ public class VehicleRegistration {
                 .user(user)
                 .status(FileStatus.SUBMITTED)
                 .build();
-        fileStorageRepository.save(file);
+        storageService.persistFile(file);
+    }
+
+    public ResponseEntity<ResponseMessage> persistVehicleData(VehicleInformationRequest vehicleInformationRequest) {
+        Long userId = UserContextHolder.getContext().getUserId();
+        User user = userRepository.findById(userId).get();
+        Vehicle vehicle = VehicleInformationMapper.toVehicle(vehicleInformationRequest);
+        vehicle.setUser(user);
+        Vehicle newVehicle = vehicleService.persistVehicle(vehicle);
+        String message = "Added Vehicle information successfully: ";
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage("Vehicle information added Successfully"));
+    }
+
+    public ResponseEntity<String> getDocumentStatus() {
+        Long userId = UserContextHolder.getContext().getUserId();
+        User user = userRepository.findById(userId).get();
+
     }
 }

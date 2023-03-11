@@ -30,27 +30,27 @@ public class DriverController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(vehicleRegistration.storeAllFiles(fileUploadRequest)));
     }
 
-//    @PostMapping("/vehicle-information")
-//    public ResponseEntity<ResponseMessage> vehicleInformation(@RequestBody VehicleInformationRequest vehicleInformationRequest,
-//                                                       BindingResult bindingResult) throws IOException {
-//        if (bindingResult.hasErrors()) {
-//            throw new BindingErrorsException(bindingResult);
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(vehicleRegistration.storeAllFiles(fileUploadRequest)));
-//    }
-//
-//  @GetMapping("/documents/status")
-//  public ResponseEntity<String> documentStatus() {
-//
-//  }
-//
-//  @GetMapping("/device")
-//  public ResponseEntity<String> shipTrackingDevice() {
-//
-//  }
-//
-//  @PutMapping("/status")
-//  public ResponseEntity<String> updateDriverStatus() {
-//
-//  }
+    @PostMapping("/vehicle-information")
+    public ResponseEntity<ResponseMessage> vehicleInformation(@RequestBody VehicleInformationRequest vehicleInformationRequest,
+                                                              BindingResult bindingResult) throws IOException {
+        if (bindingResult.hasErrors()) {
+            throw new BindingErrorsException(bindingResult);
+        }
+        return vehicleRegistration.persistVehicleData(vehicleInformationRequest);
+    }
+
+    @GetMapping("/documents/status")
+    public ResponseEntity<String> documentStatus() {
+        return vehicleRegistration.getDocumentStatus();
+    }
+
+    @GetMapping("/device")
+    public ResponseEntity<String> shipTrackingDevice() {
+        return null;
+    }
+
+    @PutMapping("/status")
+    public ResponseEntity<String> updateDriverStatus() {
+        return null;
+    }
 }

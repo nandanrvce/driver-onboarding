@@ -49,7 +49,11 @@ public class Handler extends ResponseEntityExceptionHandler {
         return new ErrorMessage("Validation failed", errorMessages);
     }
 
-
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An internal server error occurred. Please try again later.");
+    }
 
 
 

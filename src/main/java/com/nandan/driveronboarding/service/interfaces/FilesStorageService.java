@@ -1,5 +1,6 @@
 package com.nandan.driveronboarding.service.interfaces;
 
+import com.nandan.driveronboarding.entities.FileInfo;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import java.nio.file.Path;
@@ -17,4 +18,5 @@ public interface FilesStorageService {
 
     public Stream<Path> loadAll();
 
+    void persistFile(FileInfo file);
 }

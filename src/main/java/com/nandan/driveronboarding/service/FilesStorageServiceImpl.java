@@ -1,6 +1,9 @@
 package com.nandan.driveronboarding.service;
 
+import com.nandan.driveronboarding.entities.FileInfo;
+import com.nandan.driveronboarding.repository.FileStorageRepository;
 import com.nandan.driveronboarding.service.interfaces.FilesStorageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,10 @@ import java.util.stream.Stream;
 
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
+
+    @Autowired
+    FileStorageRepository fileStorageRepository;
+
     private final Path root = Paths.get("uploads");
 
     @Override
@@ -64,5 +71,10 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         } catch (IOException e) {
             throw new RuntimeException("Could not load the files!");
         }
+    }
+
+    @Override
+    public void persistFile(FileInfo file) {
+        fileStorageRepository.save(file);
     }
 }
