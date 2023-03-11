@@ -1,13 +1,12 @@
 package com.nandan.driveronboarding.validator;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 
-import static com.nandan.driveronboarding.util.CONSTANTS.SUPPORTED_CONTENT_TYPES;
+import static com.nandan.driveronboarding.util.Constant.SUPPORTED_CONTENT_TYPES;
 
 
 public class FileValidator implements ConstraintValidator<ValidFile, MultipartFile> {

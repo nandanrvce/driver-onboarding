@@ -4,7 +4,7 @@ import com.nandan.driveronboarding.entities.Token;
 import com.nandan.driveronboarding.entities.UserContextHolder;
 import com.nandan.driveronboarding.service.JwtService;
 import com.nandan.driveronboarding.repository.TokenRepository;
-import com.nandan.driveronboarding.util.CONSTANTS;
+import com.nandan.driveronboarding.util.Constant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,10 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
-    final String authHeader = request.getHeader(CONSTANTS.AUTHORIZATION);
+    final String authHeader = request.getHeader(Constant.AUTHORIZATION);
     final String jwt;
     final String userEmail;
-    if (authHeader == null ||!authHeader.startsWith(CONSTANTS.BEARER)) {
+    if (authHeader == null ||!authHeader.startsWith(Constant.BEARER)) {
       filterChain.doFilter(request, response);
       return;
     }

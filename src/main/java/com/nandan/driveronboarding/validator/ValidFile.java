@@ -6,7 +6,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static com.nandan.driveronboarding.util.CONSTANTS.INVALID_FILE_TYPE;
+import static com.nandan.driveronboarding.util.Constant.INVALID_FILE_TYPE;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

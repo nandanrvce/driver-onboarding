@@ -1,6 +1,5 @@
 package com.nandan.driveronboarding.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.nandan.driveronboarding.util.API_CONSTANTS.AUTH_ENDPOINT;
-import static com.nandan.driveronboarding.util.API_CONSTANTS.LOGOUT_ENDPOINT;
+import static com.nandan.driveronboarding.util.ApiConstant.AUTH_ENDPOINT;
+import static com.nandan.driveronboarding.util.ApiConstant.LOGOUT_ENDPOINT;
 
 @Configuration
 @EnableWebSecurity
