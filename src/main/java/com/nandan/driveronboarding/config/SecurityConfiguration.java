@@ -13,6 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static com.nandan.driveronboarding.util.API_CONSTANTS.AUTH_ENDPOINT;
+import static com.nandan.driveronboarding.util.API_CONSTANTS.LOGOUT_ENDPOINT;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class SecurityConfiguration {
         .csrf()
         .disable()
         .authorizeHttpRequests()
-        .requestMatchers("/api/v1/auth/**")
+        .requestMatchers(AUTH_ENDPOINT+"/**")
           .permitAll()
         .anyRequest()
           .authenticated()
@@ -39,7 +42,7 @@ public class SecurityConfiguration {
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .logout()
-        .logoutUrl("/api/v1/auth/logout")
+        .logoutUrl(LOGOUT_ENDPOINT)
         .addLogoutHandler(logoutHandler)
         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
     ;
