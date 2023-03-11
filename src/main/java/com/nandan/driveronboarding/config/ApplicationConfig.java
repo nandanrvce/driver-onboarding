@@ -1,6 +1,7 @@
 package com.nandan.driveronboarding.config;
 
-import com.nandan.driveronboarding.user.UserRepository;
+import com.nandan.driveronboarding.repository.UserRepository;
+import com.nandan.driveronboarding.util.CONSTANTS;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ public class ApplicationConfig {
   @Bean
   public UserDetailsService userDetailsService() {
     return username -> repository.findByEmail(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        .orElseThrow(() -> new UsernameNotFoundException(CONSTANTS.USER_NOT_FOUND));
   }
 
   @Bean

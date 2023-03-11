@@ -1,12 +1,16 @@
 package com.nandan.driveronboarding.config;
 
-import com.nandan.driveronboarding.token.TokenRepository;
+import com.nandan.driveronboarding.entities.Token;
+import com.nandan.driveronboarding.entities.UserContextHolder;
+import com.nandan.driveronboarding.service.JwtService;
+import com.nandan.driveronboarding.repository.TokenRepository;
+import com.nandan.driveronboarding.util.CONSTANTS;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Security;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,10 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
-    final String authHeader = request.getHeader("Authorization");
+    final String authHeader = request.getHeader(CONSTANTS.AUTHORIZATION);
     final String jwt;
     final String userEmail;
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+    if (authHeader == null ||!authHeader.startsWith(CONSTANTS.BEARER)) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -46,6 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           .map(t -> !t.isExpired() && !t.isRevoked())
           .orElse(false);
       if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+        Token token = tokenRepository.findByToken(jwt).get();
+        UserContextHolder.getContext().setUserId(token.getUser().getId());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
             userDetails,
             null,
