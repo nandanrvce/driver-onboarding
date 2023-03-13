@@ -2,7 +2,10 @@ package com.nandan.driveronboarding.service;
 
 import com.nandan.driveronboarding.entities.Token;
 import com.nandan.driveronboarding.entities.User;
+import com.nandan.driveronboarding.enums.DriverRegistrationStatus;
+import com.nandan.driveronboarding.enums.DriverRideAvailabilityStatus;
 import com.nandan.driveronboarding.enums.Role;
+import com.nandan.driveronboarding.enums.TrackingDeviceStatus;
 import com.nandan.driveronboarding.exception.RegistrationException;
 import com.nandan.driveronboarding.repository.TokenRepository;
 import com.nandan.driveronboarding.repository.UserRepository;
@@ -53,13 +56,15 @@ class AuthenticationServiceTest {
         registerRequest.setLastname("Doe");
         registerRequest.setEmail("johndoe@example.com");
         registerRequest.setPassword("password");
-
         User user = User.builder()
                 .firstName(registerRequest.getFirstname())
                 .lastName(registerRequest.getLastname())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.USER)
+                .trackingDeviceStatus(TrackingDeviceStatus.NOT_ASSIGNED)
+                .driverRegistrationStatus(DriverRegistrationStatus.INACTIVE)
+                .driverRideAvailabilityStatus(DriverRideAvailabilityStatus.INACTIVE)
                 .build();
 
         when(userRepository.save(user)).thenReturn(user);
@@ -86,12 +91,14 @@ class AuthenticationServiceTest {
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.USER)
+                .trackingDeviceStatus(TrackingDeviceStatus.NOT_ASSIGNED)
+                .driverRegistrationStatus(DriverRegistrationStatus.INACTIVE)
+                .driverRideAvailabilityStatus(DriverRideAvailabilityStatus.INACTIVE)
                 .build();
 
         when(userRepository.save(user)).thenThrow(new RuntimeException());
 
         assertThrows(RegistrationException.class, () -> authenticationService.register(registerRequest));
-
         verify(userRepository, times(1)).save(user);
         verify(jwtService, never()).generateToken(user);
         verify(tokenRepository, never()).save(any(Token.class));
