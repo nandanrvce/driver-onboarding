@@ -5,6 +5,7 @@ import com.nandan.driveronboarding.entities.User;
 import com.nandan.driveronboarding.entities.UserContextHolder;
 import com.nandan.driveronboarding.entities.Vehicle;
 import com.nandan.driveronboarding.enums.FileStatus;
+import com.nandan.driveronboarding.exception.VehicleRegistrationException;
 import com.nandan.driveronboarding.mappers.VehicleInformationMapper;
 import com.nandan.driveronboarding.repository.FileStorageRepository;
 import com.nandan.driveronboarding.repository.UserRepository;
@@ -38,7 +39,7 @@ public class VehicleRegistration {
     @Autowired
     FileStorageRepository fileStorageRepository;
 
-    public String storeAllFiles(FileUploadRequest fileUploadRequest) throws IOException {
+    public String storeAllFiles(FileUploadRequest fileUploadRequest) {
         Long userId = UserContextHolder.getContext().getUserId();
         storageService.save(fileUploadRequest.getDl());
         storageService.save(fileUploadRequest.getRc());
@@ -55,8 +56,13 @@ public class VehicleRegistration {
         return message;
     }
 
-    private void persistFile(User user, String fileName) throws IOException {
-        String filePath = storageService.load(fileName).getFile().getCanonicalPath();
+    private void persistFile(User user, String fileName){
+        String filePath = null;
+        try {
+            filePath = storageService.load(fileName).getFile().getCanonicalPath();
+        } catch (IOException e) {
+            throw new VehicleRegistrationException("Could not load the files!");
+        }
         FileInfo file = FileInfo.builder()
                 .url(filePath)
                 .name(fileName)

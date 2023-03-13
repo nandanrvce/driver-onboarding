@@ -16,7 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
+/**
 
+ This class represents the controller for handling driver onboarding requests.
+ It provides endpoints for uploading driver documents, providing vehicle information,
+ checking document upload status, shipping tracking devices, and updating driver status.
+ */
 @RestController
 @RequestMapping("/driver-onboarding/v1")
 public class DriverController {
@@ -27,33 +32,67 @@ public class DriverController {
     @Autowired
     UserRegistration userRegistration;
 
+    /**
+     * Endpoint for uploading driver documents.
+     *
+     * @param fileUploadRequest The {@link FileUploadRequest} object containing the files to be uploaded.
+     * @param bindingResult The {@link BindingResult} object to store validation errors.
+     * @return A {@link ResponseEntity} object containing the response message.
+     * @throws BindingErrorsException Thrown when there are binding errors in the request.
+     */
     @PostMapping("/documents")
     public ResponseEntity<ResponseMessage> uploadFiles(@Valid @ModelAttribute FileUploadRequest fileUploadRequest,
-                                                       BindingResult bindingResult) throws IOException {
+                                                       BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new BindingErrorsException(bindingResult);
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(vehicleRegistration.storeAllFiles(fileUploadRequest)));
     }
 
+    /**
+     * Endpoint for providing vehicle information.
+     *
+     * @param vehicleInformationRequest The {@link VehicleInformationRequest} object containing the vehicle information.
+     * @param bindingResult The {@link BindingResult} object to store validation errors.
+     * @return A {@link ResponseEntity} object containing the response message.
+     * @throws BindingErrorsException Thrown when there are binding errors in the request.
+     */
     @PostMapping("/vehicle-information")
     public ResponseEntity<ResponseMessage> vehicleInformation(@RequestBody VehicleInformationRequest vehicleInformationRequest,
-                                                              BindingResult bindingResult) throws IOException {
+                                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new BindingErrorsException(bindingResult);
         }
         return vehicleRegistration.persistVehicleData(vehicleInformationRequest);
     }
 
+    /**
+     * Endpoint for getting documents status.
+     *
+     * @return A {@link ResponseEntity} object containing the tracking device status string.
+     */
     @GetMapping("/documents/status")
     public ResponseEntity<Map<String,String>> documentStatus() {
         return ResponseEntity.ok(vehicleRegistration.getDocumentStatus());
     }
 
+    /**
+     * Endpoint for getting tracking device status.
+     *
+     * @return A {@link ResponseEntity} object with an empty body indicating the update was successful.
+     */
+
     @GetMapping("/device")
     public ResponseEntity<String> shipTrackingDevice() {
         return ResponseEntity.ok(userRegistration.getDeviceStatus());
     }
+
+    /**
+     * Endpoint for updating driver status.
+     *
+     * @param driverRideStatusRequest The {@link DriverRideStatusRequest} object containing the driver status.
+     * @return A {@link ResponseEntity} object with an empty body indicating the update was successful.
+     */
 
     @PutMapping("/status")
     public ResponseEntity updateDriverStatus(@RequestBody DriverRideStatusRequest driverRideStatusRequest) {

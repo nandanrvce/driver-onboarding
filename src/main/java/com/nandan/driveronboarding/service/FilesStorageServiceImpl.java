@@ -17,6 +17,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+/**
+ * This class implements the FilesStorageService interface which defines
+ * methods for managing file storage. It provides methods for initializing, saving,
+ * loading and deleting files, as well as persisting file metadata to a database.
+ **/
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
 
@@ -25,6 +30,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
     private final Path root = Paths.get("uploads");
 
+    /**
+     * Initializes the file storage directory.
+     *
+     * @throws RuntimeException if the folder for upload could not be created.
+     */
     @Override
     public void init() {
         try {
@@ -34,6 +44,12 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
     }
 
+    /**
+     * Saves the given file to the file storage directory.
+     *
+     * @param file the file to be saved
+     * @throws RuntimeException if the file could not be stored
+     */
     @Override
     public void save(MultipartFile file) {
         try {
@@ -43,6 +59,13 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
     }
 
+    /**
+     * Loads the file with the given filename from the file storage directory.
+     *
+     * @param filename the name of the file to be loaded
+     * @return a Resource representing the loaded file
+     * @throws RuntimeException if the file could not be read
+     */
     @Override
     public Resource load(String filename) {
         try {
@@ -59,11 +82,20 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
     }
 
+    /**
+     * Deletes all files in the file storage directory.
+     */
     @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(root.toFile());
     }
 
+    /**
+     * Loads all files in the file storage directory as a stream of Paths.
+     *
+     * @return a stream of Paths representing the loaded files
+     * @throws RuntimeException if the files could not be loaded
+     */
     @Override
     public Stream<Path> loadAll() {
         try {
@@ -73,6 +105,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
     }
 
+    /**
+     * Persists the metadata of the given file to a database.
+     *
+     * @param file the file metadata to be persisted
+     */
     @Override
     public void persistFile(FileInfo file) {
         fileStorageRepository.save(file);
