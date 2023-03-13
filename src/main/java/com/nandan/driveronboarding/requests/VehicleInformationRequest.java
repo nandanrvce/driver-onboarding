@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 import java.util.Date;
+//TODO add annotations for field level validation
 @Data
 public class VehicleInformationRequest {
     private String drivingLicense;
@@ -20,10 +21,6 @@ public class VehicleInformationRequest {
     private String registrationNumber;
     private String insurancePolicyNumber;
     private Date insuranceExpiration;
-    @Enumerated(EnumType.STRING)
-    private Status status;
-    private Date createdAt;
-    private Date updatedAt;
     @Enumerated(EnumType.STRING)
     private FuelType fuelType;
     private int seatingCapacity;

@@ -1,7 +1,6 @@
 package com.nandan.driveronboarding.entities;
 
-import com.nandan.driveronboarding.enums.Role;
-import com.nandan.driveronboarding.enums.TrackingDeviceStatus;
+import com.nandan.driveronboarding.enums.*;
 import jakarta.persistence.*;
 
 import java.util.Collection;
@@ -19,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "_user")
+@Table(name = "driver")
 public class User implements UserDetails {
   @Id
   @GeneratedValue
@@ -33,6 +32,10 @@ public class User implements UserDetails {
   private String phoneNumber;
   @Enumerated(EnumType.STRING)
   private TrackingDeviceStatus trackingDeviceStatus;
+  @Enumerated(EnumType.STRING)
+  private DriverRegistrationStatus driverRegistrationStatus;
+  @Enumerated(EnumType.STRING)
+  private DriverRideAvailabilityStatus driverRideAvailabilityStatus;
   @Enumerated(EnumType.STRING)
   private Role role;
   @OneToMany(mappedBy = "user")

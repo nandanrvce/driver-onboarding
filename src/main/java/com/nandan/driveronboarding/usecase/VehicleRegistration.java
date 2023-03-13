@@ -3,27 +3,45 @@ package com.nandan.driveronboarding.usecase;
 import com.nandan.driveronboarding.entities.FileInfo;
 import com.nandan.driveronboarding.entities.User;
 import com.nandan.driveronboarding.entities.UserContextHolder;
+import com.nandan.driveronboarding.entities.Vehicle;
 import com.nandan.driveronboarding.enums.FileStatus;
+import com.nandan.driveronboarding.exception.VehicleRegistrationException;
+import com.nandan.driveronboarding.mappers.VehicleInformationMapper;
 import com.nandan.driveronboarding.repository.FileStorageRepository;
 import com.nandan.driveronboarding.repository.UserRepository;
 import com.nandan.driveronboarding.requests.FileUploadRequest;
+import com.nandan.driveronboarding.requests.VehicleInformationRequest;
+import com.nandan.driveronboarding.responses.ResponseMessage;
 import com.nandan.driveronboarding.service.interfaces.FilesStorageService;
+import com.nandan.driveronboarding.service.interfaces.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class VehicleRegistration {
     @Autowired
     FilesStorageService storageService;
+
+    @Autowired
+    VehicleService vehicleService;
+
+    //TODO move the repository call to UserDetailService layer
     @Autowired
     UserRepository userRepository;
+
+    //TODO move the repository call to FileStorageService layer
     @Autowired
     FileStorageRepository fileStorageRepository;
-    public String storeAllFiles(FileUploadRequest fileUploadRequest) throws IOException {
+
+    public String storeAllFiles(FileUploadRequest fileUploadRequest) {
         Long userId = UserContextHolder.getContext().getUserId();
         storageService.save(fileUploadRequest.getDl());
         storageService.save(fileUploadRequest.getRc());
@@ -40,14 +58,43 @@ public class VehicleRegistration {
         return message;
     }
 
-    private void persistFile(User user, String fileName) throws IOException {
-        String filePath = storageService.load(fileName).getFile().getCanonicalPath();
+    private void persistFile(User user, String fileName){
+        String filePath = null;
+        try {
+            filePath = storageService.load(fileName).getFile().getCanonicalPath();
+        } catch (IOException e) {
+            throw new VehicleRegistrationException("Could not load the files!");
+        }
         FileInfo file = FileInfo.builder()
                 .url(filePath)
                 .name(fileName)
                 .user(user)
                 .status(FileStatus.SUBMITTED)
                 .build();
-        fileStorageRepository.save(file);
+        storageService.persistFile(file);
+    }
+
+    public ResponseEntity<ResponseMessage> persistVehicleData(VehicleInformationRequest vehicleInformationRequest) {
+        Long userId = UserContextHolder.getContext().getUserId();
+        //TODO move the repository call to UserDetailService layer
+        User user = userRepository.findById(userId).get();
+        Vehicle vehicle = VehicleInformationMapper.toVehicle(vehicleInformationRequest);
+        vehicle.setUser(user);
+        Vehicle newVehicle = vehicleService.persistVehicle(vehicle);
+        String message = "Added Vehicle information successfully: ";
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage("Vehicle information added Successfully"));
+    }
+
+    public Map<String,String> getDocumentStatus() {
+        Long userId = UserContextHolder.getContext().getUserId();
+        //TODO move the repository call to UserDetailService layer
+        User user = userRepository.findById(userId).get();
+        //TODO move the repository call to FileStorageService layer
+        List<FileInfo> fileInfos = fileStorageRepository.findByUser(user).get();
+        Map<String,String> map = new HashMap<>();
+        for(FileInfo info:fileInfos){
+            map.put(info.getName(),info.getStatus().name());
+        }
+        return map;
     }
 }
