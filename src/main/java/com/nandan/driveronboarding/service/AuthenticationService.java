@@ -1,13 +1,12 @@
 package com.nandan.driveronboarding.service;
 
+import com.nandan.driveronboarding.enums.*;
 import com.nandan.driveronboarding.exception.RegistrationException;
 import com.nandan.driveronboarding.requests.RegisterRequest;
 import com.nandan.driveronboarding.requests.AuthenticationRequest;
 import com.nandan.driveronboarding.responses.AuthenticationResponse;
 import com.nandan.driveronboarding.entities.Token;
 import com.nandan.driveronboarding.repository.TokenRepository;
-import com.nandan.driveronboarding.enums.TokenType;
-import com.nandan.driveronboarding.enums.Role;
 import com.nandan.driveronboarding.entities.User;
 import com.nandan.driveronboarding.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +37,9 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .trackingDeviceStatus(TrackingDeviceStatus.NOT_ASSIGNED)
+                .driverRegistrationStatus(DriverRegistrationStatus.INACTIVE)
+                .driverRideAvailabilityStatus(DriverRideAvailabilityStatus.INACTIVE)
                 .build();
         try {
             var savedUser = repository.save(user);
