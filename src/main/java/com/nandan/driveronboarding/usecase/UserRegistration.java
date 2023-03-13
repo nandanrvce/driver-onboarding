@@ -16,6 +16,7 @@ public class UserRegistration {
     @Autowired
     AuthenticationService service;
 
+    //TODO move the repository call to UserDetailService layer
     @Autowired
     UserRepository userRepository;
 
@@ -23,20 +24,25 @@ public class UserRegistration {
         service.register(request);
     }
 
+    //TODO move this function to authentication usecase and subsequently make  call through
+    // authentication service in authentication usecase
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         return service.authenticate(request);
     }
 
     public String getDeviceStatus() {
         Long userId = UserContextHolder.getContext().getUserId();
+        //TODO move the repository call to UserDetailService layer
         User user = userRepository.findById(userId).get();
         return user.getTrackingDeviceStatus().name();
     }
 
     public void updateDriverStatus(DriverRideStatusRequest driverRideStatusRequest) {
         Long userId = UserContextHolder.getContext().getUserId();
+        //TODO move the repository call to UserDetailService layer
         User user = userRepository.findById(userId).get();
         user.setDriverRideAvailabilityStatus(driverRideStatusRequest.getStatus());
+        //TODO move the repository call to UserDetailService layer
         userRepository.save(user);
     }
 }

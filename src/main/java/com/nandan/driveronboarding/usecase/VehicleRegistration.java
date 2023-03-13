@@ -33,9 +33,11 @@ public class VehicleRegistration {
     @Autowired
     VehicleService vehicleService;
 
+    //TODO move the repository call to UserDetailService layer
     @Autowired
     UserRepository userRepository;
 
+    //TODO move the repository call to FileStorageService layer
     @Autowired
     FileStorageRepository fileStorageRepository;
 
@@ -74,6 +76,7 @@ public class VehicleRegistration {
 
     public ResponseEntity<ResponseMessage> persistVehicleData(VehicleInformationRequest vehicleInformationRequest) {
         Long userId = UserContextHolder.getContext().getUserId();
+        //TODO move the repository call to UserDetailService layer
         User user = userRepository.findById(userId).get();
         Vehicle vehicle = VehicleInformationMapper.toVehicle(vehicleInformationRequest);
         vehicle.setUser(user);
@@ -84,7 +87,9 @@ public class VehicleRegistration {
 
     public Map<String,String> getDocumentStatus() {
         Long userId = UserContextHolder.getContext().getUserId();
+        //TODO move the repository call to UserDetailService layer
         User user = userRepository.findById(userId).get();
+        //TODO move the repository call to FileStorageService layer
         List<FileInfo> fileInfos = fileStorageRepository.findByUser(user).get();
         Map<String,String> map = new HashMap<>();
         for(FileInfo info:fileInfos){
